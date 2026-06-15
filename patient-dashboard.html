@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard | ClinicConnect</title>
+    <meta name="description" content="Patient dashboard for managing bookings and searching clinics on ClinicConnect.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/patient-dashboard" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                </svg>
+                ClinicConnect
+            </a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <button class="dash-nav-btn active" data-tab="search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Search Clinics
+                </button>
+                <button class="dash-nav-btn" data-tab="bookings">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    My Bookings
+                </button>
+                <button class="dash-nav-btn" data-tab="profile">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Profile
+                </button>
+                <button class="dash-nav-btn" id="logoutBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <main class="dashboard-main">
+        <!-- Access Denied Screen (hidden by default) -->
+        <div id="accessDenied" class="access-denied-screen" style="display: none;">
+            <div class="access-denied-card">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                </svg>
+                <h2>Access Denied</h2>
+                <p>You do not have permission to access this page.</p>
+                <p>Redirecting...</p>
+            </div>
+        </div>
+
+        <!-- Search Clinics Tab -->
+        <section id="tab-search" class="dash-tab active">
+            <div class="dash-tab-header">
+                <h1>Search Clinics</h1>
+                <p>Find and book appointments at top-rated clinics near you.</p>
+            </div>
+            <div class="search-bar-dashboard">
+                <input type="text" id="searchInput" placeholder="Search by clinic name, district, or city...">
+                <button id="searchBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Search
+                </button>
+            </div>
+            <div class="filters-row">
+                <select id="serviceFilter">
+                    <option value="">All Services</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Dental">Dental</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="General">General Checkup</option>
+                    <option value="Dermatology">Dermatology</option>
+                </select>
+                <select id="districtFilter">
+                    <option value="">All Districts</option>
+                    <option value="Downtown">Downtown</option>
+                    <option value="Uptown">Uptown</option>
+                    <option value="Suburbs">Suburbs</option>
+                </select>
+            </div>
+            <div class="clinics-grid" id="clinicsGrid">
+                <div class="loader-container"><div class="loader"></div></div>
+            </div>
+        </section>
+
+        <!-- My Bookings Tab -->
+        <section id="tab-bookings" class="dash-tab">
+            <div class="dash-tab-header">
+                <h1>My Bookings</h1>
+                <p>Track and manage your appointment bookings.</p>
+            </div>
+            <div class="bookings-table-wrap">
+                <table class="bookings-table" id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Service</th>
+                            <th>Clinic</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsBody">
+                        <tr><td colspan="7" style="text-align:center; padding:2rem;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Profile Tab -->
+        <section id="tab-profile" class="dash-tab">
+            <div class="dash-tab-header">
+                <h1>My Profile</h1>
+                <p>Your account information.</p>
+            </div>
+            <div class="profile-card" id="profileCard">
+                <!-- Filled by JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal modal-wide">
+            <button class="modal-close" id="closeBookingModal">&times;</button>
+            <div class="modal-header">
+                <h3 id="bookingModalTitle">Book Visit</h3>
+            </div>
+            <form id="bookingForm" class="auth-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookPatientName">Patient Name</label>
+                        <input type="text" id="bookPatientName" required placeholder="Your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookEmail">Email</label>
+                        <input type="email" id="bookEmail" required placeholder="you@email.com">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookPhone">Phone Number</label>
+                        <input type="tel" id="bookPhone" placeholder="+1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookService">Service</label>
+                        <select id="bookService" required>
+                            <option value="">Select a service...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookDate">Preferred Date</label>
+                        <input type="date" id="bookDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookTime">Preferred Time</label>
+                        <input type="time" id="bookTime" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bookNotes">Additional Notes</label>
+                    <textarea id="bookNotes" rows="3" placeholder="Any special requests or notes..."></textarea>
+                </div>
+                <div id="bookingError" class="error-msg"></div>
+                <button type="submit" class="btn-primary" id="bookingSubmitBtn">Submit Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="./js/api.js"></script>
+    <script src="./js/patient.js"></script>
+</body>
+</html>
